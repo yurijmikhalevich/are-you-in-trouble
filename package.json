@@ -1,0 +1,23 @@
+{
+  "name": "are-you-in-trouble",
+  "description": "SuperHeroic Help Desk service, written especially for KubSAU IT department",
+  "version": "0.0.1",
+  "dependencies": {
+    "express.io": "1.1.x",
+    "cat-settings": "0.9.x",
+    "passport": "~0.1.17",
+    "passport.socketio": "1.2.x",
+    "passport-ldapauth": "~0.1.1"
+  },
+  "author": {
+    "name": "Yurij Mikhalevich",
+    "email": "0@39.yt"
+  },
+  "keywords": [
+    "helpdesk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cat-corporation/cat-settings"
+  }
+}
