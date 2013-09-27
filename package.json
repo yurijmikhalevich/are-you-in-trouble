@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express.io": "1.1.x",
+    "orm": "2.1.x",
     "cat-settings": "0.9.x",
     "passport": "~0.1.17",
     "passport.socketio": "1.2.x",
