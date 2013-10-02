@@ -4,12 +4,17 @@
  * @author Yurij Mikhalevich <0@39.yt>
  */
 
+var models = require('../lib/models');
+
 exports.retrieve = function (req) {
-  req.models.Task.find(function (err, tasks) {
+  models.Task.find(function (err, tasks) {
     console.log(tasks);
     req.io.respond(tasks);
   });
 };
 
 exports.save = function (req) {
+  models.Task.create(req.data, function (err, tasks) {
+    console.log(tasks);
+  });
 };
