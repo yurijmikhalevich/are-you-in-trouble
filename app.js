@@ -26,25 +26,25 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session(sessionConfiguration));
-app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.initialize());
+//app.use(passport.session());
 app.use(express.methodOverride());
 app.use(app.router);
 
 models(function () {
-  var LocalAuthStrategy = require('passport-local').Strategy
-    , auth = require('./lib/auth');
+//  var LocalAuthStrategy = require('passport-local').Strategy
+//    , auth = require('./lib/auth');
+//
+//  passport.serializeUser(auth.serializeUser);
+//  passport.deserializeUser(auth.deserializeUser);
+//
+//  passport.use(new LocalAuthStrategy({
+//    usernameField: 'username',
+//    passwordField: 'password'
+//  }, auth.localStrategy));
 
-  passport.serializeUser(auth.serializeUser);
-  passport.deserializeUser(auth.deserializeUser);
-
-  passport.use(new LocalAuthStrategy({
-    usernameField: 'username',
-    passwordField: 'password'
-  }, auth.localStrategy));
-
-  var passportIo = require('passport.socketio');
-  app.io.set('authorization', passportIo.authorize(sessionConfiguration));
+//  var passportIo = require('passport.socketio');
+//  app.io.set('authorization', passportIo.authorize(sessionConfiguration));
 
   var routes = {
     tasks: require('./routes/tasks')

@@ -7,14 +7,16 @@
 var models = require('../lib/models');
 
 exports.retrieve = function (req) {
-  models.Task.find(function (err, tasks) {
-    console.log(tasks);
+  console.log(req.data);
+  models.Task.find({}, function (err, tasks) {
+//    console.log(tasks);
     req.io.respond(tasks);
   });
 };
 
 exports.save = function (req) {
+  console.log(req.data, req.data.length);
   models.Task.create(req.data, function (err, tasks) {
-    console.log(tasks);
+//    console.log(tasks);
   });
 };
