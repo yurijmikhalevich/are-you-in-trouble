@@ -1,0 +1,3 @@
+[submodule "public"]
+	path = public
+	url = https://github.com/Garffan/are-you-in-trouble-web-client.git

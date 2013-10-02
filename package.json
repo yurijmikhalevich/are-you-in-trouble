@@ -9,6 +9,7 @@
     "cat-settings": "0.9.x",
     "passport": "~0.1.17",
     "passport.socketio": "1.2.x",
+    "passport-local": "~0.1.6",
     "passport-ldapauth": "~0.1.1"
   },
   "author": {

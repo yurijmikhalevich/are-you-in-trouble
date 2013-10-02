@@ -5,14 +5,17 @@
  */
 
 var express = require('express.io')
+  , path = require('path')
+  , settings = require('cat-settings').loadSync(path.join(__dirname, 'settings.json'))
   , models = require('./lib/models')
   , tasks = require('./routes/tasks')
   , app = express();
 
 app.http().io();
 
+app.use('/static/', express.static(path.join(__dirname, 'public')));
 app.use(models);
 
 app.io.route('tasks', tasks);
 
-app.listen(8080);
+app.listen(settings.port);
