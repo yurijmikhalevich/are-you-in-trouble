@@ -53,7 +53,8 @@ passport.use(new LdapAuthStrategy({
     url: 'ldap://dc0.kubsau.local'
   },
   usernameField: 'username',
-  passwordField: 'password'
+  passwordField: 'password',
+  passReqToCallback: true
 }));
 
 var routes = {
@@ -66,6 +67,11 @@ app.get('/', function (req, res) {
 
 app.post('/login/', passport.authenticate('local',
   { successRedirect: '/ssss/', failureRedirect: '/' }));
+
+app.post('/login-ldap/', passport.authenticate('ldapauth', { session: true }), function (req, res) {
+  res.send({ status: 'ok' });
+});
+
 app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
 app.get('/register/', require('./routes/register').register);
 
