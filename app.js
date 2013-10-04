@@ -8,13 +8,20 @@ var express = require('express.io')
   , path = require('path')
   , settings = require('cat-settings').loadSync(path.join(__dirname, 'settings.json'))
   , passport = require('passport')
+  , passportIo = require('passport.socketio')
+  , LocalAuthStrategy = require('passport-local').Strategy
+  , LdapAuthStrategy = require('passport-ldapauth').Strategy
   , models = require('./lib/models')
+  , auth = require('./lib/auth')
   , app = express()
   , sessionConfiguration = {
     cookieParser: express.cookieParser,
     secret: settings.secret,
     key: 'session',
     cookie: { maxAge: 604800000 }
+  }
+  , routes = {
+    tasks: require('./routes/tasks')
   };
 
 app.http().io();
@@ -31,9 +38,6 @@ app.use(passport.session());
 app.use(express.methodOverride());
 app.use(app.router);
 
-var LocalAuthStrategy = require('passport-local').Strategy
-  , auth = require('./lib/auth');
-
 passport.serializeUser(auth.serializeUser);
 passport.deserializeUser(auth.deserializeUser);
 
@@ -42,11 +46,6 @@ passport.use(new LocalAuthStrategy({
   passwordField: 'password',
   passReqToCallback: true
 }, auth.localStrategy));
-
-var passportIo = require('passport.socketio');
-app.io.set('authorization', passportIo.authorize(sessionConfiguration));
-
-var LdapAuthStrategy = require('passport-ldapauth').Strategy;
 
 passport.use(new LdapAuthStrategy({
   server: {
@@ -57,16 +56,13 @@ passport.use(new LdapAuthStrategy({
   passReqToCallback: true
 }));
 
-var routes = {
-  tasks: require('./routes/tasks')
-};
+app.io.set('authorization', passportIo.authorize(sessionConfiguration));
 
 app.get('/', function (req, res) {
   res.redirect('/static/');
 });
 
-app.post('/login/', passport.authenticate('local',
-  { successRedirect: '/ssss/', failureRedirect: '/' }));
+app.post('/login/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
 
 app.post('/login-ldap/', passport.authenticate('ldapauth', { session: true }), function (req, res) {
   res.send({ status: 'ok' });
