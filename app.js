@@ -62,9 +62,9 @@ app.get('/', function (req, res) {
   res.redirect('/static/');
 });
 
-app.post('/login/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
+app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
 
-app.post('/login-ldap/', passport.authenticate('ldapauth', { session: true }), function (req, res) {
+app.post('/login/', passport.authenticate('ldapauth', { session: true }), function (req, res) {
   res.send({ status: 'ok' });
 });
 
