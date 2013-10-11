@@ -7,6 +7,7 @@
 var express = require('express.io')
   , path = require('path')
   , settings = require('cat-settings').loadSync(path.join(__dirname, 'settings.json'))
+  , logger = require('winston')
   , passport = require('passport')
   , passportIo = require('passport.socketio')
   , LocalAuthStrategy = require('passport-local').Strategy
@@ -24,12 +25,18 @@ var express = require('express.io')
     tasks: require('./routes/tasks')
   };
 
+
+logger.remove(logger.transports.Console);
+logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug', colorize: true, timestamp: true });
+
 app.http().io();
 
 app.use('/static/', express.static(path.join(__dirname, 'public')));
 app.use(models);
 app.use(express.favicon());
-app.use(express.logger('dev'));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.logger('dev'));
+}
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.session(sessionConfiguration));
@@ -47,13 +54,14 @@ passport.use(new LocalAuthStrategy({
   passReqToCallback: true
 }, auth.localStrategy));
 
-passport.use(new LdapAuthStrategy({ // FIXME: LDAP strategy is completely untested
-  server: {
-    url: 'ldap://dc0.kubsau.local'
-  },
+passport.use(new LdapAuthStrategy({
+  server: settings.ldap,
   usernameField: 'username',
   passwordField: 'password',
   passReqToCallback: true
+}, function (req, user, done) {
+  logger.debug(Object.keys(user));
+  done(null, user);
 }));
 
 app.io.set('authorization', passportIo.authorize(sessionConfiguration));
@@ -64,9 +72,7 @@ app.get('/', function (req, res) {
 
 app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
 
-app.post('/login/', passport.authenticate('ldapauth', { session: true }), function (req, res) {
-  res.send({ status: 'ok' });
-});
+app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/', failureRedirect: '/' }));
 
 app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
 app.get('/register/', require('./routes/register').register);
