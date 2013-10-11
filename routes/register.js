@@ -8,7 +8,7 @@ var auth = require('../lib/auth');
 
 exports.register = function (req, res) {
   console.log(req.user);
-  auth.register(req.models, req.query.username, req.query.password, 'departmentChief', function (err, user) {
+  auth.register(req.models, req.query.username, req.query.password, req.query.role, function (err, user) {
     res.json(user);
   });
 };

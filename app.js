@@ -47,7 +47,7 @@ passport.use(new LocalAuthStrategy({
   passReqToCallback: true
 }, auth.localStrategy));
 
-passport.use(new LdapAuthStrategy({
+passport.use(new LdapAuthStrategy({ // FIXME: LDAP strategy is completely untested
   server: {
     url: 'ldap://dc0.kubsau.local'
   },

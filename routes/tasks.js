@@ -5,16 +5,27 @@
  */
 
 exports.retrieve = function (req) {
-  console.log(req.data);
-  req.models.Task.find({}, function (err, tasks) {
-//    console.log(tasks);
-    req.io.respond(tasks);
-  });
+  if (req.handshake.user.role === 'client') {
+    req.handshake.user.getCreatedTasks(function (err, tasks) {
+      if (err) {
+        req.io.emit('database error', err);
+      } else {
+        req.io.respond(tasks);
+      }
+    });
+  } else {
+    req.handshake.user.getTasks(function (err, tasks) {
+      if (err) {
+        req.io.emit('database error', err);
+      } else {
+        req.io.respond(tasks);
+      }
+    });
+  }
 };
 
 exports.save = function (req) {
-  console.log(req.data, req.data.length);
-  req.models.Task.create(req.data, function (err, tasks) {
-//    console.log(tasks);
+  req.handshake.user.setCreatedTasks(req.data, function (err, task) {
+    console.log(err, task);
   });
 };
