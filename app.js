@@ -29,10 +29,11 @@ var express = require('express.io')
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug', colorize: true, timestamp: true });
 
+models.init();
+
 app.http().io();
 
 app.use('/static/', express.static(path.join(__dirname, 'public')));
-app.use(models);
 app.use(express.favicon());
 if (process.env.NODE_ENV !== 'production') {
   app.use(express.logger('dev'));
