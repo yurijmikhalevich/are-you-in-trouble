@@ -50,21 +50,17 @@ passport.deserializeUser(auth.deserializeUser);
 
 passport.use(new LocalAuthStrategy({
   usernameField: 'username',
-  passwordField: 'password',
-  passReqToCallback: true
+  passwordField: 'password'
 }, auth.localStrategy));
 
 passport.use(new LdapAuthStrategy({
   server: settings.ldap,
   usernameField: 'username',
-  passwordField: 'password',
-  passReqToCallback: true
-}, function (req, user, done) {
-  logger.debug(Object.keys(user));
-  done(null, user);
-}));
+  passwordField: 'password'
+}, auth.ldapStrategy));
 
 app.io.set('authorization', passportIo.authorize(sessionConfiguration));
+// all socket signals are handled only for authorized users
 
 app.get('/', function (req, res) {
   res.redirect('/static/');
