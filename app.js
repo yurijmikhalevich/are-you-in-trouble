@@ -29,51 +29,65 @@ var express = require('express.io')
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug', colorize: true, timestamp: true });
 
-models.init();
 
-app.http().io();
+models.init(function () {
+  models.knex('university_department').where({ parent_id: 1 }).select('id').exec(function (err, universityDepartments) {
+    var js = universityDepartments;
+    var array = [];
+    js.forEach(function (jss) {
+      array.push(jss.id);
+    });
+    console.log(array);
+    array.push(1);
+    models.knex('task').whereIn('university_department_id', array).offset(1).select().exec(function (err, tasks) {
+      console.log(tasks);
+    });
+  });
 
-app.use('/static/', express.static(path.join(__dirname, 'public')));
-app.use(express.favicon());
-if (process.env.NODE_ENV !== 'production') {
-  app.use(express.logger('dev'));
-}
-app.use(express.bodyParser());
-app.use(express.cookieParser());
-app.use(express.session(sessionConfiguration));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.methodOverride());
-app.use(app.router);
+  app.http().io();
 
-passport.serializeUser(auth.serializeUser);
-passport.deserializeUser(auth.deserializeUser);
+  app.use('/static/', express.static(path.join(__dirname, 'public')));
+  app.use(express.favicon());
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(express.logger('dev'));
+  }
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session(sessionConfiguration));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(express.methodOverride());
+  app.use(app.router);
 
-passport.use(new LocalAuthStrategy({
-  usernameField: 'username',
-  passwordField: 'password'
-}, auth.localStrategy));
+  passport.serializeUser(auth.serializeUser);
+  passport.deserializeUser(auth.deserializeUser);
 
-passport.use(new LdapAuthStrategy({
-  server: settings.ldap,
-  usernameField: 'username',
-  passwordField: 'password'
-}, auth.ldapStrategy));
+  passport.use(new LocalAuthStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+  }, auth.localStrategy));
 
-app.io.set('authorization', passportIo.authorize(sessionConfiguration));
-// all socket signals are handled only for authorized users
+  passport.use(new LdapAuthStrategy({
+    server: settings.ldap,
+    usernameField: 'username',
+    passwordField: 'password'
+  }, auth.ldapStrategy));
 
-app.get('/', function (req, res) {
-  res.redirect('/static/');
+  app.io.set('authorization', passportIo.authorize(sessionConfiguration));
+  // all socket signals are handled only for authorized users
+
+  app.get('/', function (req, res) {
+    res.redirect('/static/');
+  });
+
+  app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
+
+  app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/', failureRedirect: '/' }));
+
+  app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
+  app.get('/register/', require('./routes/register').register);
+
+  app.io.route('tasks', routes.tasks);
+
+  app.listen(settings.port);
 });
-
-app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
-
-app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/', failureRedirect: '/' }));
-
-app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
-app.get('/register/', require('./routes/register').register);
-
-app.io.route('tasks', routes.tasks);
-
-app.listen(settings.port);
