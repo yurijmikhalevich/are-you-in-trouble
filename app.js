@@ -67,7 +67,10 @@ models.init(function () {
     res.redirect('/static/');
   });
 
-  app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/' }));
+  app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/',
+    failureRedirect: '/forbidden/' }));
+
+  app.get('/forbidden/', function (req, res) { res.send(403); });
 
   app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/', failureRedirect: '/' }));
 
