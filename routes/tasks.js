@@ -5,6 +5,8 @@
  */
 
 var logger = require('winston')
+  , knex = require('Knex').knex
+  , db = require('../lib/database')
   , models = require('../lib/models');
 
 /**
@@ -32,37 +34,49 @@ exports.retrieve = function (req) {
     limit = req.data.limit;
   }
   if (userRole === 'client') {
-    user.fetch({ withRelated: [ 'universityDepartment' ] }).then(function (user) {
-      user.related('universityDepartment').createdTasks().offset(offset).limit(limit).fetch(function (tasks) {
-        req.io.respond(tasks.toJSON());
-      }, function (err) {
+    db.tasks.forUniversityDepartment(user.get('university_department_id'), offset, limit, function (err, tasks) {
+      if (err) {
         req.io.emit('database error', err);
-      });
-    }, function (err) {
-      req.io.emit('database error', err);
-    });
+      } else {
+        req.io.respond(tasks);
+      }
+    })
   } else if (userRole === 'helper') {
-    user.related('tasks').offset(offset).limit(limit).fetch().then(function (tasks) {
-      req.io.respond(tasks.toJSON());
-    }, function (err) {
-      req.io.emit('database error', err);
-    });
+    knex('task').join('task2helper', 'task2helper.task_id', '=', 'task.id')
+      .where('task2helper.helper_id', user.get('id')).offset(offset).limit(limit).select('task.*')
+      .exec(function (err, tasks) {
+        if (err) {
+          req.io.emit('database error', err);
+        } else {
+          req.io.respond(tasks);
+        }
+      });
   } else if (userRole === 'subDepartmentChief') {
-    req.io.respond('not implemented');
-//    user.fetch({ withRelated: [ 'subDepartment' ] }).then(function (user) {
-//      user.related('subDepartment').tasks().offset(offset)
-//    })
+    knex('task').where('sub_department_id', user.get('sub_department_id')).offset(offset).limit(limit).select()
+      .exec(function (err, tasks) {
+        if (err) {
+          req.io.emit('database error', err);
+        } else {
+          req.io.respond(tasks);
+        }
+      });
   } else { // if (userRole === 'departmentChief'
-    models.knex('task').offset(offset).limit(limit).select().exec(function (err, tasks) {
-      req.io.respond([ err, tasks ]);
+    knex('task').offset(offset).limit(limit).exec(function (err, tasks) {
+      if (err) {
+        req.io.emit('database error', err);
+      } else {
+        req.io.respond(tasks);
+      }
     });
-//    new models.Task().fetch({ offset: offset, limit: limit }).then(function (tasks) {
-//      req.io.respond(tasks.toJSON());
-//    }, function (err) {
-//      req.io.emit('database error', err);
-//    });
   }
 };
 
 exports.save = function (req) {
+  new models.Task(req.data).save().exec(function (err, task) {
+    if (err) {
+      req.io.emit('database error', err);
+    } else {
+      req.io.respond(task.toJSON());
+    }
+  });
 };

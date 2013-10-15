@@ -31,19 +31,6 @@ logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'product
 
 
 models.init(function () {
-  models.knex('university_department').where({ parent_id: 1 }).select('id').exec(function (err, universityDepartments) {
-    var js = universityDepartments;
-    var array = [];
-    js.forEach(function (jss) {
-      array.push(jss.id);
-    });
-    console.log(array);
-    array.push(1);
-    models.knex('task').whereIn('university_department_id', array).offset(1).select().exec(function (err, tasks) {
-      console.log(tasks);
-    });
-  });
-
   app.http().io();
 
   app.use('/static/', express.static(path.join(__dirname, 'public')));
