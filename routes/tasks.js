@@ -5,7 +5,7 @@
  */
 
 var logger = require('winston')
-  , knex = require('Knex').knex
+  , knex = require('knex').knex
   , db = require('../lib/database')
   , models = require('../lib/models');
 
