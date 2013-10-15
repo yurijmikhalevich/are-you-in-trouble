@@ -5,7 +5,6 @@
  */
 
 var logger = require('winston')
-  , Knex = require('knex').knex
   , db = require('../lib/database')
   , models = require('../lib/models');
 
@@ -42,7 +41,7 @@ exports.retrieve = function (req) {
       }
     })
   } else if (userRole === 'helper') {
-    Knex.knex('task').join('task2helper', 'task2helper.task_id', '=', 'task.id')
+    models.knex('task').join('task2helper', 'task2helper.task_id', '=', 'task.id')
       .where('task2helper.helper_id', user.get('id')).offset(offset).limit(limit).select('task.*')
       .exec(function (err, tasks) {
         if (err) {
@@ -52,7 +51,7 @@ exports.retrieve = function (req) {
         }
       });
   } else if (userRole === 'subDepartmentChief') {
-    Knex.knex('task').where('sub_department_id', user.get('sub_department_id')).offset(offset).limit(limit).select()
+    models.knex('task').where('sub_department_id', user.get('sub_department_id')).offset(offset).limit(limit).select()
       .exec(function (err, tasks) {
         if (err) {
           req.io.emit('database error', err);
@@ -61,7 +60,7 @@ exports.retrieve = function (req) {
         }
       });
   } else { // if (userRole === 'departmentChief'
-    Knex.knex('task').offset(offset).limit(limit).exec(function (err, tasks) {
+    models.knex('task').offset(offset).limit(limit).exec(function (err, tasks) {
       if (err) {
         req.io.emit('database error', err);
       } else {
