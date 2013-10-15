@@ -6,5 +6,4 @@
 var models = require('../lib/models');
 
 exports.retrieve = function (req) {
-
 };
