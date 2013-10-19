@@ -23,13 +23,13 @@ exports.retrieve = function (req) {
     }
   }
   if (user.role === 'client') {
-    db.tasks.retrieve.forClient(user.id, offset, limit, null, cb);
+    db.tasks.retrieve.forClient(user.id, offset, limit, null, null, cb);
   } else if (user.role === 'helper') {
-    db.tasks.retrieve.forHelper(user.id, offset, limit, null, cb);
+    db.tasks.retrieve.forHelper(user.id, offset, limit, null, null, cb);
   } else if (user.role === 'subDepartmentChief') {
-    db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, null, cb);
+    db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, null, null, cb);
   } else { // if (user.role === 'departmentChief'
-    db.tasks.retrieve.forDepartmentChief(offset, limit, null, cb);
+    db.tasks.retrieve.forDepartmentChief(offset, limit, null, null, cb);
   }
 };
 
