@@ -4,9 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "express.io": "1.1.x",
-    "knex": "~0.4.9",
-    "bookshelf": "~0.5.7",
-    "pg": "~2.7.0",
+    "any-db-postgres": "~1.0.0",
     "cat-settings": "0.9.x",
     "passport": "~0.1.17",
     "passport.socketio": "1.2.x",
