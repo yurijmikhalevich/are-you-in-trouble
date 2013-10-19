@@ -12,6 +12,7 @@ var express = require('express.io')
   , passportIo = require('passport.socketio')
   , LocalAuthStrategy = require('passport-local').Strategy
   , LdapAuthStrategy = require('passport-ldapauth').Strategy
+  , db = require('./lib/database')
   , auth = require('./lib/auth')
   , app = express()
   , sessionConfiguration = {
@@ -28,6 +29,16 @@ var express = require('express.io')
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   colorize: true, timestamp: true });
+
+logger.info('Initializing database');
+db.init(function (err) {
+  if (err) {
+    logger.error(err.toString(), err);
+    throw err;
+  } else {
+    logger.info('Database successfully initialized');
+  }
+});
 
 app.http().io();
 
