@@ -10,7 +10,9 @@ var logger = require('winston')
 exports.retrieve = function (req) {
   var user = req.handshake.user
     , limit = 50
-    , offset = req.data.offset || 0;
+    , offset = req.data.offset || 0
+    , order = req.data.order
+    , filters = req.data.filters;
   if (req.data.limit && req.data.limit < 50) {
     limit = req.data.limit;
   }
@@ -23,13 +25,13 @@ exports.retrieve = function (req) {
     }
   }
   if (user.role === 'client') {
-    db.tasks.retrieve.forClient(user.id, offset, limit, null, null, cb);
+    db.tasks.retrieve.forClient(user.id, offset, limit, order, filters, cb);
   } else if (user.role === 'helper') {
-    db.tasks.retrieve.forHelper(user.id, offset, limit, null, null, cb);
+    db.tasks.retrieve.forHelper(user.id, offset, limit, order, filters, cb);
   } else if (user.role === 'subDepartmentChief') {
-    db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, null, null, cb);
+    db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, order, filters, cb);
   } else { // if (user.role === 'departmentChief'
-    db.tasks.retrieve.forDepartmentChief(offset, limit, null, null, cb);
+    db.tasks.retrieve.forDepartmentChief(offset, limit, order, filters, cb);
   }
 };
 
