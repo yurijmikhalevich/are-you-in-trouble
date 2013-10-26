@@ -28,12 +28,20 @@ exports.retrieve = function (req) {
     db.tasks.retrieve.forClient(user.id, offset, limit, order, filters, cb);
   } else if (user.role === 'helper') {
     db.tasks.retrieve.forHelper(user.id, offset, limit, order, filters, cb);
-  } else if (user.role === 'subDepartmentChief') {
+  } else if (user.role === 'sub department chief') {
     db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, order, filters, cb);
-  } else { // if (user.role === 'departmentChief'
+  } else { // if (user.role === 'department chief'
     db.tasks.retrieve.forDepartmentChief(offset, limit, order, filters, cb);
   }
 };
 
 exports.save = function (req) {
+  db.tasks.save(req.data, function (err, res) {
+    if (err) {
+      req.io.emit('err', err.toString());
+      logger.error(err.toString(), err);
+    } else {
+      req.io.respond(res);
+    }
+  });
 };
