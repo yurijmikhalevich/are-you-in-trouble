@@ -25,7 +25,6 @@ var express = require('express.io')
     tasks: require('./routes/tasks')
   };
 
-
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   colorize: true, timestamp: true });
