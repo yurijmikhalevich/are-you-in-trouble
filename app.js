@@ -44,6 +44,8 @@ db.init(function (err) {
 
 app.http().io();
 
+require('express.io-middleware')(app);
+
 app.use('/static/', express.static(path.join(__dirname, 'public')));
 app.use(express.favicon());
 if (process.env.NODE_ENV !== 'production') {
@@ -87,6 +89,18 @@ app.post('/login/', passport.authenticate('ldapauth', { session: true, successRe
 
 app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
 app.get('/register/', require('./routes/register').register);
+
+app.io.use(function (req, next) {
+  logger.debug('Event "%s" registered.', req.io.event, { data: req.data, event: req.io.event });
+  if (typeof req.data !== 'object') {
+    logger.warn('"%s" signal data is not an object.', req.io.event, { data: req.data, event: req.io.event });
+    var raw = req.data;
+    req.data = {
+      __raw: raw
+    };
+  }
+  next();
+});
 
 app.io.route('tasks', routes.tasks);
 app.io.route('task types', routes.taskTypes);
