@@ -7,7 +7,7 @@
 var db = require('../lib/database');
 
 exports.retrieve = function (req) {
-  db.registries.retrieve('task_type', function (err, subdepartments) {
+  db.registries.retrieve('subdepartment', function (err, subdepartments) {
     if (err) {
       req.io.emit('err', err.toString());
     } else {
@@ -17,7 +17,7 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  db.registries.save('task_type', req.data, function (err, id) {
+  db.registries.save('subdepartment', req.data, function (err, id) {
     if (err) {
       req.io.emit('err', err.toString());
     } else {

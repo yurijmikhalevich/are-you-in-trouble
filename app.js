@@ -22,7 +22,10 @@ var express = require('express.io')
     cookie: { maxAge: 604800000 }
   }
   , routes = {
-    tasks: require('./routes/tasks')
+    tasks: require('./routes/tasks'),
+    taskTypes: require('./routes/task_types'),
+    subdepartments: require('./routes/subdepartments'),
+    universityDepartments: require('./routes/university_departments')
   };
 
 logger.remove(logger.transports.Console);
@@ -86,5 +89,8 @@ app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); r
 app.get('/register/', require('./routes/register').register);
 
 app.io.route('tasks', routes.tasks);
+app.io.route('task types', routes.taskTypes);
+app.io.route('subdepartments', routes.subdepartments);
+app.io.route('university departments', routes.universityDepartments);
 
 app.listen(settings.port);
