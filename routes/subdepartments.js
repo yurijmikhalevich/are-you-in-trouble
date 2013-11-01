@@ -17,11 +17,15 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  db.registries.save('subdepartment', req.data, function (err, id) {
-    if (err) {
-      req.io.emit('err', err.toString());
-    } else {
-      req.io.respond(id);
-    }
-  });
+  if (req.handshake.user.role !== 'department chief') {
+    req.io.emit('err', 'Unauthorized');
+  } else {
+    db.registries.save('subdepartment', req.data, function (err, id) {
+      if (err) {
+        req.io.emit('err', err.toString());
+      } else {
+        req.io.respond(id);
+      }
+    });
+  }
 };
