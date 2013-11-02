@@ -22,7 +22,7 @@ var express = require('express.io')
     cookie: { maxAge: 604800000 }
   }
   , routes = {
-    auth: require('./routes/auth'),
+    middlewares: require('./routes/middlewares'),
     tasks: require('./routes/tasks'),
     taskTypes: require('./routes/task_types'),
     subdepartments: require('./routes/subdepartments'),
@@ -104,8 +104,8 @@ app.io.use(function (req, next) {
   next();
 });
 
-app.io.use(routes.auth.checkPermissions);
-app.io.use(routes.auth.validateRequestData);
+app.io.use(routes.middlewares.checkPermissions);
+app.io.use(routes.middlewares.validateRequestData);
 
 app.io.route('tasks', routes.tasks);
 app.io.route('task types', routes.taskTypes);
