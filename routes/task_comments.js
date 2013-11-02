@@ -21,10 +21,7 @@ exports.retrieve = function (req) {
 exports.save = function (req) {
   var user = req.handshake.user;
   if (req.data.comment.id) {
-    if (user.role !== 'department chief') {
-      req.io.emit('err', 'Unauthorized');
-      return;
-    } else if (!req.data.comment.user_id) {
+    if (!req.data.comment.user_id) {
       req.io.emit('err', 'Invalid input data');
       return;
     }
@@ -41,11 +38,7 @@ exports.save = function (req) {
 };
 
 exports.remove = function (req) {
-  if (req.handshake.user.role !== 'department chief') {
-    req.io.emit('err', 'Unauthorized');
-  } else {
-    db.taskComments.remove(req.data.commentId, cbs.respond(req, { removed: true }));
-  }
+  db.taskComments.remove(req.data.commentId, cbs.respond(req, { removed: true }));
 };
 
 function checkAccess(userId, userRole, taskId, cb) {

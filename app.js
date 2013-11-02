@@ -22,10 +22,12 @@ var express = require('express.io')
     cookie: { maxAge: 604800000 }
   }
   , routes = {
+    auth: require('./routes/auth'),
     tasks: require('./routes/tasks'),
     taskTypes: require('./routes/task_types'),
     subdepartments: require('./routes/subdepartments'),
-    universityDepartments: require('./routes/university_departments')
+    universityDepartments: require('./routes/university_departments'),
+    taskComments: require('./routes/task_comments')
   };
 
 logger.remove(logger.transports.Console);
@@ -102,9 +104,13 @@ app.io.use(function (req, next) {
   next();
 });
 
+app.io.use(routes.auth.checkPermissions);
+app.io.use(routes.auth.validateRequestData);
+
 app.io.route('tasks', routes.tasks);
 app.io.route('task types', routes.taskTypes);
 app.io.route('subdepartments', routes.subdepartments);
 app.io.route('university departments', routes.universityDepartments);
+app.io.route('task comments', routes.taskComments);
 
 app.listen(settings.port);

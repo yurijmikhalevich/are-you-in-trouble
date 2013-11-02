@@ -17,15 +17,11 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  if (req.handshake.user.role !== 'department chief') {
-    req.io.emit('err', 'Unauthorized');
-  } else {
-    db.registries.save('university_department', req.data, function (err, id) {
-      if (err) {
-        req.io.emit('err', err.toString());
-      } else {
-        req.io.respond(id);
-      }
-    });
-  }
+  db.registries.save('university_department', req.data, function (err, id) {
+    if (err) {
+      req.io.emit('err', err.toString());
+    } else {
+      req.io.respond(id);
+    }
+  });
 };

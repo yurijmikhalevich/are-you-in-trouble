@@ -13,7 +13,8 @@
     "passport-ldapauth": "~0.1.1",
     "async": "~0.2.9",
     "bcrypt": "~0.7.7",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "revalidator": "~0.1.5"
   },
   "author": {
     "name": "Yurij Mikhalevich",
