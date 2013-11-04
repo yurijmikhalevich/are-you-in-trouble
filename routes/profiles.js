@@ -19,6 +19,3 @@ exports['set subdepartment'] = function (req) {
 
 exports['set university department'] = function (req) {
 };
-
-exports['set password'] = function (req) {
-};

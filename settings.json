@@ -1,12 +1,15 @@
 {
   "port": 8080,
   "secret": "random stuff goes here",
-  "ldap": {
-    "url": "ldap://server.local",
-    "adminDn": "ldapuser",
-    "adminPassword": "userpassword",
-    "searchBase": "dc=local",
-    "searchFilter": "(mailNickname={{username}})"
+  "auth": {
+    "model": "local",
+    "ldap": {
+      "url": "ldap://server.local",
+      "adminDn": "ldapuser",
+      "adminPassword": "userpassword",
+      "searchBase": "dc=local",
+      "searchFilter": "(mailNickname={{username}})"
+    }
   },
   "database": {
     "host": "localhost",
