@@ -8,12 +8,17 @@ var cbs = require('./callbacks')
   , db = require('../lib/database');
 
 exports.retrieve = function (req) {
+  // NOTICE: there is no limit
+  // TODO: if necessary, add limit and offset support
   var user = req.handshake.user;
   checkAccess(user.id, user.role, req.data.taskId, cbs.doNext(req, function (res) {
     if (res === false) {
       req.io.emit('err', 'Unauthorized');
     } else {
-      db.taskComments.retrieve(req.data.taskId, cbs.respond(req));
+      db.taskComments.retrieve(req.data.taskId, cbs.doNext(req, function (comments) {
+        req.io.join('task comments' + req.data.taskId);
+        req.io.respond(comments);
+      }));
     }
   }));
 };
@@ -32,13 +37,22 @@ exports.save = function (req) {
     if (res === false) {
       req.io.emit('err', 'Unauthorized');
     } else {
-      db.taskComments.save(req.data.comment, cbs.respond(req, { saved: true }));
+      db.taskComments.save(req.data.comment, cbs.doNext(req, function (comment) {
+        req.io.room('task comments' + req.data.taskId).broadcast('task comments:update', comment);
+        req.io.respond(comment);
+      }));
     }
   }));
 };
 
 exports.remove = function (req) {
-  db.taskComments.remove(req.data.commentId, cbs.respond(req, { removed: true }));
+  // TODO: if necessary, add notifications about comment removing
+  db.taskComments.remove(req.data.commentId, cbs.doNext(req, { ok: true }));
+};
+
+exports.unsubscribe = function (req) {
+  req.io.leave('task comments' + req.data.taskId);
+  req.io.respond({ ok: true });
 };
 
 function checkAccess(userId, userRole, taskId, cb) {

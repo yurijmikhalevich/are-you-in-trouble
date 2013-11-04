@@ -14,16 +14,16 @@ exports.retrieve = function (req) {
     , order = req.data.order
     , filters = req.data.filters;
   if (user.role === 'client') {
-    req.io.join('tasks_ud' + user.university_department_id);
+    req.io.join('tasks ud' + user.university_department_id);
     db.tasks.retrieve.forClient(user.id, offset, limit, order, filters, cbs.respond(req));
   } else if (user.role === 'helper') {
-    req.io.join('tasks_h' + user.id);
+    req.io.join('tasks h' + user.id);
     db.tasks.retrieve.forHelper(user.id, offset, limit, order, filters, cbs.respond(req));
   } else if (user.role === 'subdepartment chief') {
-    req.io.join('tasks_sd' + user.subdepartment_id);
+    req.io.join('tasks sd' + user.subdepartment_id);
     db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, order, filters, cbs.respond(req));
   } else { // if (user.role === 'department chief'
-    req.io.join('tasks_dc');
+    req.io.join('tasks dc');
     db.tasks.retrieve.forDepartmentChief(offset, limit, order, filters, cbs.respond(req));
   }
 };
@@ -73,18 +73,18 @@ exports['remove helper'] = function (req) {
 };
 
 function notifyClientsAboutTaskUpdate(req, event, task, data) {
-  req.io.room('tasks_ud' + task.university_department_id).broadcast(event, data || task);
+  req.io.room('tasks ud' + task.university_department_id).broadcast(event, data || task);
   if (task.subdepartment_id) {
     // FIXME: handle subdepartment change
-    req.io.room('tasks_sd' + task.subdepartment_id).broadcast(event, data || task);
+    req.io.room('tasks sd' + task.subdepartment_id).broadcast(event, data || task);
   }
-  req.io.room('tasks_dc').broadcast(event, data || task);
+  req.io.room('tasks dc').broadcast(event, data || task);
 }
 
 function notifyClientsAboutHelpersChange(req, event, taskId, helperId) {
   db.tasks.retrieve.forDepartmentChief(0, 1, undefined, { id: taskId }, cbs.doNext(req, function (tasks) {
     var task = tasks[0];
     notifyClientsAboutTaskUpdate(req, event, task, { task_id: taskId, helper_id: helperId });
-    req.io.room('tasks_h' + helperId).broadcast(event, task);
+    req.io.room('tasks h' + helperId).broadcast(event, task);
   }));
 }
