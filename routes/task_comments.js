@@ -5,7 +5,8 @@
  */
 
 var cbs = require('./callbacks')
-  , db = require('../lib/database');
+  , db = require('../lib/database')
+  , mailer = require('../lib/mailer');
 
 exports.retrieve = function (req) {
   // NOTICE: there is no limit
