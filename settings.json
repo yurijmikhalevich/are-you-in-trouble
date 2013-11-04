@@ -6,7 +6,7 @@
     "adminDn": "ldapuser",
     "adminPassword": "userpassword",
     "searchBase": "dc=local",
-    "searchFilter": "(mailNickname={{username}})"
+    "searchFilter": "(|(mailNickname={{username}})(mail={{username}}))"
   },
   "database": {
     "host": "localhost",

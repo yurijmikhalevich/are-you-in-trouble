@@ -85,9 +85,10 @@ app.get('/', function (req, res) {
 app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/',
   failureRedirect: '/forbidden/' }));
 
-app.get('/forbidden/', function (req, res) { res.send(403); });
+app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/',
+  failureRedirect: '/forbidden/' }));
 
-app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/', failureRedirect: '/' }));
+app.get('/forbidden/', function (req, res) { res.send(403); });
 
 app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
 app.get('/register/', require('./routes/register').register);
