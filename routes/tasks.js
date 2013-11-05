@@ -55,10 +55,6 @@ exports.remove = function (req) {
   }));
 };
 
-exports['get helpers'] = function (req) {
-  db.tasks.getHelpers(req.data.taskIds, cbs.respond(req));
-};
-
 exports['add helper'] = function (req) {
   db.tasks.addHelper(req.data.taskId, req.data.helperId, cbs.doNext(req, function () {
     notifyUsersAboutHelpersChange(req, 'tasks:add helper', req.data.taskId, req.data.helperId);
@@ -77,7 +73,7 @@ exports['remove helper'] = function (req) {
  * @param {Object} req Express.io request object
  * @param {string} event
  * @param {Object} task
- * @param {Object} data
+ * @param {Object} [data]
  */
 function notifyUsersAboutTaskUpdate(req, event, task, data) {
   req.io.room('tasks ud' + task.university_department_id).broadcast(event, data || task);

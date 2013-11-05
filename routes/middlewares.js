@@ -9,13 +9,11 @@ var logger = require('winston')
   , validator = require('../public/js/validator')
   , roleEvents = {
   client: [ 'tasks:retrieve', 'tasks:save', 'tasks:close', 'task comments:retrieve', 'task comments:save',
-    'task types:retrieve', 'profiles:retrieve', 'profiles:save', 'tasks:get helpers', 'task comments:unsubscribe' ],
+    'task types:retrieve', 'profiles:retrieve', 'profiles:save', 'task comments:unsubscribe' ],
   helper: [ 'tasks:retrieve', 'task comments:retrieve', 'task comments:save', 'task types:retrieve',
-    'university departments:retrieve', 'profiles:retrieve', 'profiles:save', 'tasks:get helpers',
-    'task comments:unsubscribe' ],
+    'university departments:retrieve', 'profiles:retrieve', 'profiles:save', 'task comments:unsubscribe' ],
   'subdepartment chief': [ 'tasks:retrieve', 'task comments:retrieve', 'task comments:save', 'task types:retrieve',
-    'university departments:retrieve', 'profiles:retrieve', 'profiles:save', 'tasks:get helpers',
-    'task comments:unsubscribe' ]
+    'university departments:retrieve', 'profiles:retrieve', 'profiles:save', 'task comments:unsubscribe' ]
 };
 
 exports.checkPermissions = function (req, next) {
