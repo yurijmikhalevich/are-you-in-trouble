@@ -26,20 +26,20 @@ exports.retrieve = function (req) {
 
 exports.save = function (req) {
   var user = req.handshake.user;
-  if (req.data.comment.id) {
-    if (!req.data.comment.user_id) {
+  if (req.data.id) {
+    if (!req.data.user_id) {
       req.io.emit('err', 'Invalid input data');
       return;
     }
   } else {
-    req.data.comment.user_id = user.id;
+    req.data.user_id = user.id;
   }
-  checkAccess(user.id, user.role, req.data.taskId, cbs.doNext(req, function (res) {
+  checkAccess(user.id, user.role, req.data.task_id, cbs.doNext(req, function (res) {
     if (res === false) {
       req.io.emit('err', 'Unauthorized');
     } else {
-      db.taskComments.save(req.data.comment, cbs.doNext(req, function (comment) {
-        req.io.room('task comments' + req.data.taskId).broadcast('task comments:update', comment);
+      db.taskComments.save(req.data, cbs.doNext(req, function (comment) {
+        req.io.room('task comments' + req.data.task_id).broadcast('task comments:update', comment);
         req.io.respond(comment);
       }));
     }
