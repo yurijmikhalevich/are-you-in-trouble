@@ -1,0 +1,31 @@
+{
+  "port": 8080,
+  "secret": "random stuff goes here",
+  "ldap": {
+    "url": "ldap://server.local",
+    "adminDn": "ldapuser",
+    "adminPassword": "userpassword",
+    "searchBase": "dc=local",
+    "searchFilter": "(|(mailNickname={{username}})(mail={{username}}))"
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "helpdesk",
+    "password": "12345",
+    "basename": "helpdesk",
+    "prefix": "hd_"
+  },
+  "mailer": {
+    "host": "mail.kubsau.ru",
+    "port": 25,
+    "secureConnection": true,
+    "auth": {
+      "user": "helpdesk@kubsau.ru",
+      "pass": "password"
+    },
+    "ignoreTLS": false,
+    "debug": true,
+    "from": "KubSAU helpdesk service <helpdesk@kubsau.ru>"
+  }
+}
