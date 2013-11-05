@@ -27,7 +27,8 @@ var express = require('express.io')
     taskTypes: require('./routes/task_types'),
     subdepartments: require('./routes/subdepartments'),
     universityDepartments: require('./routes/university_departments'),
-    taskComments: require('./routes/task_comments')
+    taskComments: require('./routes/task_comments'),
+    profiles: require('./routes/profiles')
   };
 
 logger.remove(logger.transports.Console);
@@ -113,5 +114,6 @@ app.io.route('task types', routes.taskTypes);
 app.io.route('subdepartments', routes.subdepartments);
 app.io.route('university departments', routes.universityDepartments);
 app.io.route('task comments', routes.taskComments);
+app.io.route('profiles', routes.profiles);
 
 app.listen(settings.port);

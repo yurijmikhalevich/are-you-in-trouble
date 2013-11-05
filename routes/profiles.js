@@ -11,7 +11,7 @@ exports.retrieve = function (req) {
   var limit = req.data.limit || 50
     , offset = req.data.offset || 0
     , order = req.data.order
-    , filters = req.data.filters;
+    , filters = req.data.filters || { id: req.handshake.user.id };
   db.profiles.retrieve(offset, limit, order, filters, cbs.respond(req));
 };
 
