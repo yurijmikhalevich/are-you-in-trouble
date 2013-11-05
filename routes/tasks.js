@@ -30,7 +30,7 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  var user = req.handshake.user.id;
+  var user = req.handshake.user;
   if (user.role === 'client') {
     req.data.client_id = user.id;
     req.data.university_department_id = user.university_department_id;
