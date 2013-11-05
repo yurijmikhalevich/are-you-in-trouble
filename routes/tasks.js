@@ -37,6 +37,8 @@ exports.save = function (req) {
   }
   db.tasks.save(req.data, cbs.doNext(req, function (task) {
     notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
+    task.helper_ids = [];
+    task.comment_count = 0;
     req.io.respond(task);
   }));
 };
