@@ -15,13 +15,13 @@ exports.retrieve = function (req) {
     , order = req.data.order
     , filters = req.data.filters;
   if (user.role === 'client') {
-    req.io.join('tasks ud' + user.university_department_id);
+    req.io.join('tasks ud' + user.universityDepartmentId);
     db.tasks.retrieve.forClient(user.id, offset, limit, order, filters, cbs.respond(req));
   } else if (user.role === 'helper') {
     req.io.join('tasks h' + user.id);
     db.tasks.retrieve.forHelper(user.id, offset, limit, order, filters, cbs.respond(req));
   } else if (user.role === 'subdepartment chief') {
-    req.io.join('tasks sd' + user.subdepartment_id);
+    req.io.join('tasks sd' + user.subdepartmentId);
     db.tasks.retrieve.forSubdepartmentChief(user.id, offset, limit, order, filters, cbs.respond(req));
   } else { // if (user.role === 'department chief'
     req.io.join('tasks dc');
@@ -32,13 +32,13 @@ exports.retrieve = function (req) {
 exports.save = function (req) {
   var user = req.handshake.user;
   if (user.role === 'client') {
-    req.data.client_id = user.id;
-    req.data.university_department_id = user.university_department_id;
+    req.data.clientId = user.id;
+    req.data.universityDepartmentId = user.universityDepartmentId;
   }
   db.tasks.save(req.data, cbs.doNext(req, function (task) {
     notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
-    task.helper_ids = [];
-    task.comment_count = 0;
+    task.helperIds = [];
+    task.commentCount = 0;
     req.io.respond(task);
   }));
 };
@@ -78,10 +78,10 @@ exports['remove helper'] = function (req) {
  * @param {Object} [data]
  */
 function notifyUsersAboutTaskUpdate(req, event, task, data) {
-  req.io.room('tasks ud' + task.university_department_id).broadcast(event, data || task);
-  if (task.subdepartment_id) {
+  req.io.room('tasks ud' + task.universityDepartmentId).broadcast(event, data || task);
+  if (task.subdepartmentId) {
     // FIXME: handle subdepartment change
-    req.io.room('tasks sd' + task.subdepartment_id).broadcast(event, data || task);
+    req.io.room('tasks sd' + task.subdepartmentId).broadcast(event, data || task);
   }
   req.io.room('tasks dc').broadcast(event, data || task);
   mailer.mailUsersAboutTaskUpdate(event, task, data);
@@ -96,7 +96,7 @@ function notifyUsersAboutTaskUpdate(req, event, task, data) {
 function notifyUsersAboutHelpersChange(req, event, taskId, helperId) {
   db.tasks.retrieve.forDepartmentChief(0, 1, undefined, { id: taskId }, cbs.doNext(req, function (tasks) {
     var task = tasks[0];
-    notifyUsersAboutTaskUpdate(req, event, task, { task_id: taskId, helper_id: helperId });
+    notifyUsersAboutTaskUpdate(req, event, task, { taskId: taskId, helperId: helperId });
     req.io.room('tasks h' + helperId).broadcast(event, task);
     mailer.mailUsersAboutHelpersChange(event, task, helperId);
   }));

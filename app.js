@@ -92,7 +92,6 @@ app.post('/login/', passport.authenticate('ldapauth', { session: true, successRe
 app.get('/forbidden/', function (req, res) { res.send(403); });
 
 app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
-app.get('/register/', require('./routes/register').register);
 
 app.io.use(function (req, next) {
   logger.debug('Event "%s" registered.', req.io.event, { data: req.data, event: req.io.event });

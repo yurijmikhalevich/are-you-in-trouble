@@ -4,24 +4,13 @@
  * @author Yurij Mikhalevich <0@39.yt>
  */
 
-var db = require('../lib/database');
+var cbs = require('./callbacks')
+  , db = require('../lib/database');
 
 exports.retrieve = function (req) {
-  db.registries.retrieve('university_department', function (err, university_departments) {
-    if (err) {
-      req.io.emit('err', err.toString());
-    } else {
-      req.io.respond(university_departments);
-    }
-  });
+  db.registries.retrieve('university department', cbs.respond(req));
 };
 
 exports.save = function (req) {
-  db.registries.save('university_department', req.data, function (err, id) {
-    if (err) {
-      req.io.emit('err', err.toString());
-    } else {
-      req.io.respond(id);
-    }
-  });
+  db.registries.save('university department', req.data, cbs.respond(req));
 };

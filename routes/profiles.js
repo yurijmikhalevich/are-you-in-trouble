@@ -23,7 +23,7 @@ exports.save = function (req) {
 };
 
 exports.remove = function (req) {
-  db.profiles.remove(req.data.profileId, cbs.respond(req, { removed: true }));
+  db.profiles.remove(req.data.profileId, cbs.respond(req, { ok: true }));
 };
 
 exports['make client'] = function (req) {
@@ -39,11 +39,9 @@ exports['make department chief'] = function (req) {
 };
 
 exports['set subdepartment'] = function (req) {
-  db.profiles.setSubdepartment(req.data.userId, req.data.subdepartmentId,
-    cbs.respond(req, { updated: true }));
+  db.profiles.setSubdepartment(req.data.userId, req.data.subdepartmentId, cbs.respond(req));
 };
 
 exports['set university department'] = function (req) {
-  db.profiles.setUniversityDepartment(req.data.userId, req.data.universityDepartmentId,
-    cbs.respond(req, { updated: true }));
+  db.profiles.setUniversityDepartment(req.data.userId, req.data.universityDepartmentId, cbs.respond(req));
 };
