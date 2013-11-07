@@ -37,11 +37,3 @@ exports['make helper'] = function (req) {
 exports['make department chief'] = function (req) {
   db.profiles.makeDepartmentChief(req.data.userId, cbs.respond(req));
 };
-
-exports['set subdepartment'] = function (req) {
-  db.profiles.setSubdepartment(req.data.userId, req.data.subdepartmentId, cbs.respond(req));
-};
-
-exports['set university department'] = function (req) {
-  db.profiles.setUniversityDepartment(req.data.userId, req.data.universityDepartmentId, cbs.respond(req));
-};
