@@ -43,7 +43,7 @@ exports.save = function (req) {
 
 exports.remove = function (req) {
   // TODO: if necessary, add notifications about comment removing
-  db.taskComments.remove(req.data.commentId, cbs.response(req, { ok: true }));
+  db.taskComments.remove(req.data.commentId, cbs.respond(req, { ok: true }));
 };
 
 exports.unsubscribe = function (req) {
