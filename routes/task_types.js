@@ -4,24 +4,13 @@
  * @author Yurij Mikhalevich <0@39.yt>
  */
 
-var db = require('../lib/database');
+var cbs = require('./callbacks')
+  , db = require('../lib/database');
 
 exports.retrieve = function (req) {
-  db.registries.retrieve('task_type', function (err, subdepartments) {
-    if (err) {
-      req.io.emit('err', err.toString());
-    } else {
-      req.io.respond(subdepartments);
-    }
-  });
+  db.registries.retrieve('task type', cbs.respond(req));
 };
 
 exports.save = function (req) {
-  db.registries.save('task_type', req.data, function (err, id) {
-    if (err) {
-      req.io.emit('err', err.toString());
-    } else {
-      req.io.respond(id);
-    }
-  });
+  db.registries.save('task type', req.data, cbs.respond(req));
 };
