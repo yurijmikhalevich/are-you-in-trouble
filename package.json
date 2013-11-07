@@ -15,8 +15,7 @@
     "bcrypt": "~0.7.7",
     "winston": "~0.7.2",
     "revalidator": "~0.1.5",
-    "nodemailer": "~0.5.5",
-    "camelize": "~0.1.0"
+    "nodemailer": "~0.5.5"
   },
   "author": {
     "name": "Yurij Mikhalevich",
