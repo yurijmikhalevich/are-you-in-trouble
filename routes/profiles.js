@@ -26,8 +26,16 @@ exports.remove = function (req) {
   db.profiles.remove(req.data.profileId, cbs.respond(req, { removed: true }));
 };
 
-exports['set role'] = function (req) {
-  db.profiles.setRole(req.data.userId, req.data.role, cbs.respond(req, { updated: true }));
+exports['make client'] = function (req) {
+  db.profiles.makeClient(req.data.userId, req.data.universityDepartmentId, cbs.respond(req));
+};
+
+exports['make helper'] = function (req) {
+  db.profiles.makeHelper(req.data.userId, req.data.chief || false, req.data.subdepartmentId, cbs.respond(req));
+};
+
+exports['make department chief'] = function (req) {
+  db.profiles.makeDepartmentChief(req.data.userId, cbs.respond(req));
 };
 
 exports['set subdepartment'] = function (req) {
