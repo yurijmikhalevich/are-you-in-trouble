@@ -84,7 +84,7 @@ function notifyUsersAboutTaskUpdate(req, event, task, data) {
     req.io.room('tasks sd' + task.subdepartmentId).broadcast(event, data || task);
   }
   req.io.room('tasks dc').broadcast(event, data || task);
-  mailer.mailUsersAboutTaskUpdate(event, task, data);
+  mailer.mailUsersAboutTaskUpdate(event, task);
 }
 
 /**
@@ -98,6 +98,6 @@ function notifyUsersAboutHelpersChange(req, event, taskId, helperId) {
     var task = tasks[0];
     notifyUsersAboutTaskUpdate(req, event, task, { taskId: taskId, helperId: helperId });
     req.io.room('tasks h' + helperId).broadcast(event, task);
-    mailer.mailUsersAboutHelpersChange(event, task, helperId);
+    mailer.mailUsersAboutTaskUpdate(event, task);
   }));
 }

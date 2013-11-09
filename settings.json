@@ -26,6 +26,24 @@
     },
     "ignoreTLS": false,
     "debug": true,
-    "from": "KubSAU helpdesk service <helpdesk@kubsau.ru>"
+    "from": "KubSAU helpdesk service <helpdesk@kubsau.ru>",
+    "blanks": {
+      "taskCreated": {
+        "subject": "[Created] Task number {{id}}",
+        "text": "A new task with number {{id}} created:\n{{content}}\n\nUniversity department: {{universityDepartment}}.\nClient: {{client}}.\nType: {{type}}."
+      },
+      "taskUpdated": {
+        "subject": "[{{state}}] Task number {{id}}",
+        "text": "Task with number {{id}} created at {{createdAt}} updated:\n{{content}}\n\nUniversity department: {{universityDepartment}}.\nClient: {{client}}.\nType: {{type}}.\nState: {{state}}.\nSubdepartment: {{subdepartment}}.\nHelpers: {{helpers}}."
+      },
+      "helpersChanged": {
+        "subject": "[Updated] Helpers for task number {{id}} are changed",
+        "text": "Helpers for task number {{id}} created at {{createdAt}} are changed.\n{{content}}\n\nUniversity department: {{universityDepartment}}.\nClient: {{client}}.\nType: {{type}}.\nState: {{state}}.\nSubdepartment: {{subdepartment}}.\nHelpers: {{helpers}}."
+      },
+      "taskCommentAdded": {
+        "subject": "[New comment] Task number {{id}}",
+        "text": "Added comment for task number {{id}} created at {{createdAt}}:\n{{comment}}\n{{author}}\n\nTask:\n{{content}}\n\nUniversity department: {{universityDepartment}}.\nClient: {{client}}.\nType: {{type}}.\nState: {{state}}.\nSubdepartment: {{subdepartment}}.\nHelpers: {{helpers}}."
+      }
+    }
   }
 }
