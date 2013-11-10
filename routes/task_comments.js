@@ -25,8 +25,10 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  var user = req.handshake.user;
+  var user = req.handshake.user
+    , event = 'task comments:update';
   if (!req.data.id) {
+    event = 'task comments:insert';
     req.data.userId = user.id;
   }
   checkAccess(user.id, user.role, req.data.taskId, cbs.doNext(req, function (res) {
@@ -34,7 +36,8 @@ exports.save = function (req) {
       req.io.emit('err', 'Unauthorized');
     } else {
       db.taskComments.save(req.data, cbs.doNext(req, function (comment) {
-        req.io.room('task comments' + req.data.taskId).broadcast('task comments:update', comment);
+        req.io.room('task comments' + req.data.taskId).broadcast(event, comment);
+        mailer.mailUsersAboutTaskCommentUpdate(event, comment);
         req.io.respond(comment);
       }));
     }
@@ -43,7 +46,10 @@ exports.save = function (req) {
 
 exports.remove = function (req) {
   // TODO: if necessary, add notifications about comment removing
-  db.taskComments.remove(req.data.commentId, cbs.respond(req, { ok: true }));
+  db.taskComments.remove(req.data.commentId, cbs.doNext(req, function () {
+    req.io.broadcast('task comments:remove', { id: req.data.commentId });
+    req.io.respond({ ok: true });
+  }));
 };
 
 exports.unsubscribe = function (req) {
