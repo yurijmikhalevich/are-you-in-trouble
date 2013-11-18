@@ -12,5 +12,8 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  db.registries.save('subdepartment', req.data, cbs.respond(req));
+  db.registries.save('subdepartment', req.data, cbs.doNext(req, function (subdepartment) {
+    req.io.broadcast('subdepartment:update', subdepartment);
+    req.io.respond(subdepartment);
+  }));
 };

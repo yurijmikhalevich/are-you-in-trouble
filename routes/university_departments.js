@@ -12,5 +12,8 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  db.registries.save('university department', req.data, cbs.respond(req));
+  db.registries.save('university department', req.data, cbs.doNext(req, function (universityDepartment) {
+    req.io.broadcast('university department:update', universityDepartment);
+    req.io.respond(universityDepartment);
+  }));
 };
