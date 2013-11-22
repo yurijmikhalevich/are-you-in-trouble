@@ -65,7 +65,7 @@ exports['add helper'] = function (req) {
 };
 
 exports['remove helper'] = function (req) {
-  db.tasks.removeHelper(req.data.taskId, req.data.helperId, cbs.respond(req, function () {
+  db.tasks.removeHelper(req.data.taskId, req.data.helperId, cbs.doNext(req, function () {
     notifyUsersAboutHelpersChange(req, 'tasks:remove helper', req.data.taskId, req.data.helperId);
     req.io.respond({ ok: true });
   }));
