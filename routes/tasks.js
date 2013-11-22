@@ -36,9 +36,9 @@ exports.save = function (req) {
     req.data.universityDepartmentId = user.universityDepartmentId;
   }
   db.tasks.save(req.data, cbs.doNext(req, function (task) {
-    notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
     task.helperIds = [];
     task.commentCount = 0;
+    notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
     req.io.respond(task);
   }));
 };
