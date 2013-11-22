@@ -12,5 +12,8 @@ exports.retrieve = function (req) {
 };
 
 exports.save = function (req) {
-  db.registries.save('task type', req.data, cbs.respond(req));
+  db.registries.save('task type', req.data, cbs.doNext(req, function (taskType) {
+    req.io.broadcast('task type:update', taskType);
+    req.io.respond(taskType);
+  }));
 };

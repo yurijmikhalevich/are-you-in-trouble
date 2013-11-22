@@ -49,6 +49,10 @@ app.http().io();
 
 require('express.io-middleware')(app);
 
+app.io.set('heartbeat timeout', 50);
+app.io.set('heartbeat interval', 20);
+app.io.set('browser client minification', true);
+
 app.use('/static/', express.static(path.join(__dirname, 'public')));
 app.use(express.favicon());
 if (process.env.NODE_ENV !== 'production') {

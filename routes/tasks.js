@@ -36,9 +36,9 @@ exports.save = function (req) {
     req.data.universityDepartmentId = user.universityDepartmentId;
   }
   db.tasks.save(req.data, cbs.doNext(req, function (task) {
-    notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
     task.helperIds = [];
     task.commentCount = 0;
+    notifyUsersAboutTaskUpdate(req, req.data.id ? 'tasks:update' : 'tasks:insert', task);
     req.io.respond(task);
   }));
 };
@@ -65,7 +65,7 @@ exports['add helper'] = function (req) {
 };
 
 exports['remove helper'] = function (req) {
-  db.tasks.removeHelper(req.data.taskId, req.data.helperId, cbs.respond(req, function () {
+  db.tasks.removeHelper(req.data.taskId, req.data.helperId, cbs.doNext(req, function () {
     notifyUsersAboutHelpersChange(req, 'tasks:remove helper', req.data.taskId, req.data.helperId);
     req.io.respond({ ok: true });
   }));
