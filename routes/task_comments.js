@@ -36,6 +36,7 @@ exports.save = function (req) {
       req.io.emit('err', 'Unauthorized');
     } else {
       db.taskComments.save(req.data, cbs.doNext(req, function (comment) {
+        req.io.broadcast('task comments:add', { taskId: req.data.taskId });
         req.io.room('task comments' + req.data.taskId).broadcast(event, comment);
         mailer.mailUsersAboutTaskCommentUpdate(event, comment);
         req.io.respond(comment);
@@ -46,8 +47,8 @@ exports.save = function (req) {
 
 exports.remove = function (req) {
   // TODO: if necessary, add notifications about comment removing
-  db.taskComments.remove(req.data.commentId, cbs.doNext(req, function () {
-    req.io.broadcast('task comments:remove', { id: req.data.commentId });
+  db.taskComments.remove(req.data.commentId, cbs.doNext(req, function (comment) {
+    req.io.broadcast('task comments:remove', { commentId: comment.id, taskId: comment.taskId });
     req.io.respond({ ok: true });
   }));
 };
