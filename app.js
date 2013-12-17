@@ -1,42 +1,44 @@
 /**
- * Copyright (C) 2013 Yurij Mikhalevich
  * @license GPLv3
- * @author Yurij Mikhalevich <0@39.yt>
+ * @author 0@39.yt (Yurij Mikhalevich)
  */
 
-var express = require('express.io')
-  , path = require('path')
-  , settings = require('cat-settings').loadSync(path.join(__dirname, 'settings.json'))
-  , logger = require('winston')
-  , passport = require('passport')
-  , passportIo = require('passport.socketio')
-  , LocalAuthStrategy = require('passport-local').Strategy
-  , LdapAuthStrategy = require('passport-ldapauth').Strategy
-  , db = require('./lib/database')
-  , auth = require('./lib/auth')
-  , app = express()
-  , sessionConfiguration = {
-    cookieParser: express.cookieParser,
-    secret: settings.secret,
-    key: 'session',
-    cookie: { maxAge: 604800000 }
-  }
-  , routes = {
-    middlewares: require('./routes/middlewares'),
-    tasks: require('./routes/tasks'),
-    taskTypes: require('./routes/task_types'),
-    subdepartments: require('./routes/subdepartments'),
-    universityDepartments: require('./routes/university_departments'),
-    taskComments: require('./routes/task_comments'),
-    profiles: require('./routes/profiles')
-  };
+var express = require('express.io'),
+    path = require('path'),
+    settings =
+        require('cat-settings').loadSync(path.join(__dirname, 'settings.json')),
+    logger = require('winston'),
+    passport = require('passport'),
+    passportIo = require('passport.socketio'),
+    LocalAuthStrategy = require('passport-local').Strategy,
+    LdapAuthStrategy = require('passport-ldapauth').Strategy,
+    db = require('./lib/database'),
+    auth = require('./lib/auth'),
+    app = express(),
+    sessionConfiguration = {
+      cookieParser: express.cookieParser,
+      secret: settings.secret,
+      key: 'session',
+      cookie: { maxAge: 604800000 }
+    },
+    routes = {
+      middlewares: require('./routes/middlewares'),
+      tasks: require('./routes/tasks'),
+      taskTypes: require('./routes/task_types'),
+      subdepartments: require('./routes/subdepartments'),
+      universityDepartments: require('./routes/university_departments'),
+      taskComments: require('./routes/task_comments'),
+      profiles: require('./routes/profiles')
+    };
 
 logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, { level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  colorize: true, timestamp: true });
+logger.add(logger.transports.Console, {
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  colorize: true, timestamp: true
+});
 
 logger.info('Initializing database');
-db.init(function (err) {
+db.init(function(err) {
   if (err) {
     logger.error(err.toString(), err);
     throw err;
@@ -83,24 +85,33 @@ passport.use(new LdapAuthStrategy({
 app.io.set('authorization', passportIo.authorize(sessionConfiguration));
 // all socket signals are handled only for authorized users
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.redirect('/static/');
 });
 
-app.post('/login-internal/', passport.authenticate('local', { successRedirect: '/',
-  failureRedirect: '/forbidden/' }));
+app.post('/login-internal/', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/forbidden/'
+}));
 
-app.post('/login/', passport.authenticate('ldapauth', { session: true, successRedirect: '/',
-  failureRedirect: '/forbidden/' }));
+app.post('/login/', passport.authenticate('ldapauth', {
+  session: true, successRedirect: '/',
+  failureRedirect: '/forbidden/'
+}));
 
-app.get('/forbidden/', function (req, res) { res.send(403); });
+app.get('/forbidden/', function(req, res) { res.send(403); });
 
-app.get('/logout/', function (req, res) { console.log(req.user); req.logout(); res.redirect('/'); });
+app.get('/logout/', function(req, res) {
+  req.logout();
+  res.redirect('/');
+});
 
-app.io.use(function (req, next) {
-  logger.debug('Event "%s" registered.', req.io.event, { data: req.data, event: req.io.event });
+app.io.use(function(req, next) {
+  logger.debug('Event "%s" registered.', req.io.event,
+      {data: req.data, event: req.io.event});
   if (typeof req.data !== 'object') {
-    logger.warn('"%s" signal data is not an object.', req.io.event, { data: req.data, event: req.io.event });
+    logger.warn('"%s" signal data is not an object.', req.io.event,
+        {data: req.data, event: req.io.event});
     var raw = req.data;
     req.data = {
       __raw: raw
