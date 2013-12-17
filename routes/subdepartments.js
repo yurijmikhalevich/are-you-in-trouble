@@ -1,19 +1,27 @@
 /**
- * Copyright (C) 2013 Yurij Mikhalevich
  * @license GPLv3
- * @author Yurij Mikhalevich <0@39.yt>
+ * @author 0@39.yt (Yurij Mikhalevich)
  */
 
-var cbs = require('./callbacks')
-  , db = require('../lib/database');
+var cbs = require('./callbacks'),
+    db = require('../lib/database');
 
-exports.retrieve = function (req) {
+
+/**
+ * @param {Object} req Express.io request object
+ */
+exports.retrieve = function(req) {
   db.registries.retrieve('subdepartment', cbs.respond(req));
 };
 
-exports.save = function (req) {
-  db.registries.save('subdepartment', req.data, cbs.doNext(req, function (subdepartment) {
-    req.io.broadcast('subdepartment:update', subdepartment);
-    req.io.respond(subdepartment);
-  }));
+
+/**
+ * @param {Object} req Express.io request object
+ */
+exports.save = function(req) {
+  db.registries.save('subdepartment', req.data,
+      cbs.doNext(req, function(subdepartment) {
+        req.io.broadcast('subdepartment:update', subdepartment);
+        req.io.respond(subdepartment);
+      }));
 };
